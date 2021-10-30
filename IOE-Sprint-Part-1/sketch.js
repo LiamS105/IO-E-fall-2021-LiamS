@@ -13,8 +13,15 @@ let diameter0 = 0, diameter1 = 0, diameter2 = 0;
 
 let osc1, osc2, osc3, fft;
 
+let img;
+
+
 function setup() {
-  
+    
+  img = loadImage('./helicopter.png');
+
+  dingdong = loadSound('./doorbell.mp3');
+    
   createCanvas(windowWidth, windowHeight);
 
 ///////////////////////////////////////////////////////////////////
@@ -34,7 +41,7 @@ function setup() {
   ///////////////////////////////////////////////////////////////////////
   // Assuming our Arduino is connected, let's open the connection to it
   // Change this to the name of your arduino's serial port
-  serial.open("COM6");
+  serial.open("COM3");
  /////////////////////////////////////////////////////////////////////////////
  ///////////////////////////////////////////////////////////////////////////
  ////////////////////////////////////////////////////////////////////////////
@@ -75,17 +82,17 @@ function setup() {
 ///////////////////////////////////////////////////////////////////////////
 
 
-osc1 = new p5.TriOsc(); // set frequency and type
-osc1.amp(.5);
-osc2 = new p5.TriOsc(); // set frequency and type
-osc2.amp(.5);  
-osc3 = new p5.TriOsc(); // set frequency and type
-osc3.amp(.5);    
+//osc1 = new p5.TriOsc(); // set frequency and type
+//osc1.amp(.5);
+//osc2 = new p5.TriOsc(); // set frequency and type
+//osc2.amp(.5);  
+//osc3 = new p5.TriOsc(); // set frequency and type
+//osc3.amp(.5);    
 
-fft = new p5.FFT();
-osc1.start();
-osc2.start(); 
-osc3.start();
+//fft = new p5.FFT();
+//osc1.start();
+//osc2.start(); 
+//osc3.start();
 
 // We are connected and ready to go
 function serverConnected() {
@@ -152,6 +159,8 @@ function gotRawData(thedata) {
 // serial.write(somevar) writes out the value of somevar to the serial device
 
 
+
+
 function draw() {
   
   background(255,255,255);
@@ -159,37 +168,42 @@ function draw() {
   ellipseMode(RADIUS);    
   fill(255,0,0);
   noStroke(); 
-  //console.log("diameter0  "  + diameter0);
-  ellipse(100, 100, diameter0*100, diameter0*100);
-  ellipseMode(RADIUS);    
-  fill(0,255,0);
-  ellipse(200, 100, diameter1, diameter1);
+  console.log("diameter0  "  + diameter0);
+  square(diameter1, diameter2*2, diameter0*100);
+  //ellipse(100, 100, diameter0*100, diameter0*100);
+  //ellipseMode(RADIUS);    
+  //fill(0,255,0);
+  //ellipse(200, 100, diameter1, diameter1);
   ellipseMode(RADIUS);
-  fill(0,0,255);
+  lightColor = diameter2*3;
+  if (lightColor>255) {lightColor=255;}
+  fill(0, lightColor, 0);
+    //rect(30, 20, diameter2, diameter2);
   ellipse(300, 100, diameter2, diameter2);
-    
+image(img, 700, diameter1, 450, 150);
   
+    
   var freq = map(diameter0, 0, width, 40, 880);    
-    osc1.freq(freq);
+    //osc1.freq(freq);
     //console.log(freq);
     
   var freq2 = map(diameter1, 0, width, 40, 880);    
-    osc2.freq(freq2);
+    //osc2.freq(freq2);
     //console.log(freq2);
     
  var freq3 = map(diameter2*10, 0, width, 40, 880);    
-    osc3.freq(freq3);
+    //osc3.freq(freq3);
     //console.log(freq3); 
 }
 
 
 function mouseClicked(){
   if (getAudioContext().state !== 'running') {
-    getAudioContext().resume();
+      dingdong.play();
     console.log("getAudioContext().state" + getAudioContext().state);
   }
-  };
-  
+};
+
 
 
   
