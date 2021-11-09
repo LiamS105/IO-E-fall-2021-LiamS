@@ -2,6 +2,10 @@
 
 let video;
 let pose;
+let lastX;
+let lastY;
+let drawOn = true;
+
 
 function setup(){
 createCanvas(640, 480);
@@ -24,10 +28,20 @@ function gotPoses(poses){
     
 } 
 
+function mouseClicked(){
+    drawOn = !drawOn;
+};
+
+
 function draw(){
 if(pose){
     fill(255,0,0);
-    ellipse(pose.leftWrist.x, pose.leftWrist.y, 10);
+    if (drawOn){
+        line(lastX, lastY, pose.leftWrist.x, pose.leftWrist.y)
+        ellipse(pose.leftWrist.x, pose.leftWrist.y, 10);
+    }
+    lastX = pose.leftWrist.x
+    lastY = pose.leftWrist.y
 }    
     
 }
