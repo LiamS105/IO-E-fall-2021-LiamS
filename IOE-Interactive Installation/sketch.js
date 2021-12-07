@@ -1,74 +1,52 @@
-// Copyright (c) 2019 ml5
-//
-// This software is released under the MIT License.
-// https://opensource.org/licenses/MIT
-
-/* ===
-ml5 Example
-PoseNet example using p5.js
-=== */
+// this is a very simple sketch that demonstrates how to place a video cam image into a canvas 
 
 let video;
-let poseNet;
-let poses = [];
+let pose;
+let noseX;
+let noseY;
+let aussie;
 
-function setup() {
-  createCanvas(640, 480);
-  video = createCapture(VIDEO);
-  video.size(width, height);
-   
+function preload(){
+function preload(){
+    aussie = loadSound('./austrailia.mp3');
+}
+
+function setup(){
+createCanvas(640, 480);
+video = createCapture(VIDEO);
+video.hide();
+poseNet = ml5.poseNet(video, modelLoaded);
+poseNet.on('pose', gotPoses);
+}
+
+function modelLoaded(){
+    console.log("modelLoaded function has been called so this work!!!!");
     
-  dingdong = loadSound('./doorbell.mp3');
+    
+    
+};
 
-  // Create a new poseNet method with a single detection
-  poseNet = ml5.poseNet(video, {outputStride:8, quantBytes:4}, modelReady);
-  // This sets up an event that fills the global variable "poses"
-  // with an array every time new poses are detected
-  poseNet.on('pose', function(results) {
-    poses = results;
-  });
-  // Hide the video element, and just show the canvas
-  video.hide();
-}
+function gotPoses(poses){
+    noseX = poses[0].pose.nose.x
+    noseY = poses[0].pose.nose.y
+    console.log(noseX);
+    if(noseX < 200 && noseX > 0){
+       if (getAudioContext().state !== 'running') {
+            aussie.play();
+        } 
+    }
+    if( poses.length >0 ){
+        pose = poses[0].pose;
+    } 
+    
+    
+} 
 
-function modelReady() {
-  select('#status').html('Model Loaded');
-}
-
-function mousePressed(){
-  console.log(JSON.stringify(poses))
-}
-
-function draw() {
-  image(video, 0, 0, width, height);
-  strokeWeight(2);
-
-  // For one pose only (use a for loop for multiple poses!)
-  if (poses.length > 0) {
-    const pose = poses[0].pose;
-      console.log(pose);
-
-    // Create a pink ellipse for the nose
-    fill(255,0,0);
-    const nose = pose.nose;
-    ellipse(nose.x, nose.y, 60, 60);
-
-    // Create a yellow ellipse for the right eye
-    fill(255, 255, 255);
-    const rightEye = pose.rightEye;
-    ellipse(rightEye.x, rightEye.y, 40, 40);
-    fill(0, 0, 0);
-    ellipse(rightEye.x, rightEye.y, 20, 20);
-
-    // Create a yellow ellipse for the right eye
-    fill(255, 255, 255);
-    const leftEye = pose.leftEye;
-    ellipse(leftEye.x, leftEye.y, 40, 40);
-    fill(0, 0, 0);
-    ellipse(leftEye.x, leftEye.y, 20, 20);
-      
-    fill(0,255,0);
-      const rightShoulder = pose.rightShoulder;
-    ellipse(rightShoulder.x, rightShoulder.y, 20, 20 );  
-  }
+function draw(){
+image(video, 0, 0);
+//if(pose){
+    //fill(255,0,0);
+    //ellipse(pose.nose.x, pose.nose.y, 10);
+//}  
+    
 }
