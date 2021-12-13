@@ -16,9 +16,6 @@ function setup() {
   createCanvas(640, 480);
   video = createCapture(VIDEO);
   video.size(width, height);
-   
-    
-  dingdong = loadSound('./doorbell.mp3');
 
   // Create a new poseNet method with a single detection
   poseNet = ml5.poseNet(video, {outputStride:8, quantBytes:4}, modelReady);
